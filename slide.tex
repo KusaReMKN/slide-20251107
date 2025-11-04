@@ -4,9 +4,10 @@
   fleqn,
   14pt,
 ]{beamer}
+\batchmode
 
 \usetheme[progressbar=frametitle]{Metropolis}
-%\setbeameroption{show notes on second screen=bottom}
+\setbeameroption{show notes on second screen=bottom}
 
 \usepackage{xparse}
 \usepackage{mathtools,amssymb}
@@ -52,11 +53,13 @@
 \title{郵便を用いた超低速IP通信システムの検討}
 \subject{エンジニア作業飲み集会\#XXX}
 \author{%
-  \ltjsetparameter{autospacing=false, autoxspacing=false}
-  上羽 未栞\inst{\dag}\inst{a)}\and
-  信濃 眞伊\inst{\dag}\inst{b)}\and
-  佐伯 真紘\inst{\dag}\inst{c)}\and
-  一式 すみれ\inst{\dag}\inst{d)}}
+  \texorpdfstring{%
+    \ltjsetparameter{autospacing=false, autoxspacing=false}
+    上羽 未栞\inst{\dag}\inst{a)}\and
+    信濃 眞伊\inst{\dag}\inst{b)}\and
+    佐伯 真紘\inst{\dag}\inst{c)}\and
+    一式 すみれ\inst{\dag}\inst{d)}}
+    {上羽 未栞\and 信濃 眞伊\and 佐伯 真紘\and 一式 すみれ}}
 \institute{
   \inst{\dag}\hspace{.66\zw}東京広域電話網, \url{https://tkytel.github.io/}\\
   a) a.k.a. KusaReMKN, \url{mkn@kusaremkn.com}\\
@@ -73,7 +76,7 @@
   \titlepage
   \thispagestyle{empty}
   \note{
-    はじまるよ。
+    はじまるよ〜。
 
     郵便を用いた超低速IP通信システムの検討と題して、
     東京広域電話網のLoLLIPoPチームを代表して
@@ -84,18 +87,11 @@
 \begin{frame}
   \frametitle{今回のおはなし}
 
-  %~\\[-.25\baselineskip]
+  ~\\[.25\baselineskip]
   \tableofcontents
   \note{
     今回の発表の流れはこんな感じだよ。
     おおよそ25分くらいで進められたらいいな。
-
-    機械式計算器の操作を眺めながら
-    現代の電子計算機に通ずる部分があることを紹介していくよ。
-
-    四則演算に加えて平方根も計算できるので、
-    百均に売っている電卓と同程度の計算能力を持っていると主張しておくよ。
-    機械式計算器もナメたもんじゃないなと思ってもらえると嬉しいな。
   }
 \end{frame}
 
@@ -123,8 +119,8 @@
 
       17{\scriptsize(18)}歳のJK（超重要）\\
       \hspace{1.5\zw}実はプログラマでもエンジニアでもない\\
-      \hspace{1.5\zw}古い計算機っぽいものが大好き\\
-      \hspace{1.5\zw}自分の得意分野がわからなくなってきた
+      \hspace{1.5\zw}普段はホラを吹いて生活している\\
+      \hspace{1.5\zw}古い計算機っぽいものが大好き
       \\~\\[-.5\baselineskip]
 
       Twitterで思想を垂れ流すことが得意\\
@@ -135,40 +131,109 @@
     自称大天才美少女プログラミング初心者の上羽未栞だよ。
     みかんちゃんって呼ばれると大変喜ぶよ。
 
+    ｲﾁﾅﾅ歳のJKだよ。重要だよ。
     大天才とか偉ぶっているけれど、実はプログラマでもエンジニアでもないよ。
-    古い計算機っぽいものが大好きで、いろいろなものに手を出し続けていたら、
-    最近は自分の得意分野が何だったのかわからなくなってきたよ。
+    普段はホラ吹きを生業としているよ。
+    古い計算機っぽいものが大好きで、いろいろなものに手を出しては
+    それに掛けられた呪いを解くことを趣味にしているよ。
 
     Twitterや自分のウェブサイトで思想を垂れ流すのが得意だよ。
     暇な人は眺めてみてね。
   }
 \end{frame}
 
-\section{インターネットの通信に思いを馳せる}
+\section{インターネットを支える技術}
 \note{
-
+  まずはインターネットを支える技術について思いを馳せてみるよ。
 }
 
 \begin{frame}
   \frametitle{インターネットなしでは生きられない！}
 
-  べんりだね
-\end{end}
+  身の周りにある便利なもの
+  \begin{itemize}
+    \item
+      TwitterやYouTubeを支えているWeb
+    \item
+      しゃべる洗濯機や冷蔵庫を支えているIoT
+    \item
+      睡眠時間を奪い心身の健康を蝕むVRChat
+  \end{itemize}
+  全てネットワークを使った通信のおかげ
 
-\begin{frame}
-  \frametitle{インターネットのしくみ}
+  \vspace{\zh}
+  それなのに……\\
+  \hspace{1.5\zw}ネットワークがなぜ繋がるのかあまり考えていない\\
+  \hspace{1.5\zw}ネットワークの通信にタダ乗りしているだけ\\
 
-  レイヤだね
+  \note{
+    現代社会においては、
+    あらゆるものがネットワークに接続されていて、
+    何かしら通信していることが常になってきているよ。
+    よく例として挙げられるものではWebがあるし、
+    最近ではIoTなんかも生活の一部に感じられるようになってきたよ。
+    今お前らがこうやってVRChatをしていられるのもネットワークのおかげだよ。
+    いわんや、ネットワークを用いた通信は当然のものになっているよ。
+
+    しかし、これを支える技術、
+    特により物理側に近い層については関心を寄せる人は
+    あまり多くないような印象があるよ。
+    これは由々しき事態であるから、
+    積極的にネットワークに思いを馳せていきたいね。
+  }
 \end{frame}
 
 \begin{frame}
-  \frametitle{情報を伝えるためのしくみ}
+  \frametitle{インターネットのしくみ\cite{RFC1122}}
 
-  LANケーブル、
-  Wi-Fi、
-  光ファイバ、
-  伝書鳩
+  \includegraphics[page=1,width=\linewidth]{./images/pictures.pdf}
+
+  \note{
+    ネットワークの代表格であるとろの
+    インターネットの基本原理について立ち返るよ。
+    TCP/IPでは、より上位から順に、
+    アプリケーション層、トランスポート層、インターネット層、リンク層の
+    4つの階層から成っているよ。
+
+    アプリケーション層は、例えばWebやVRChatといったサービス、
+    名前解決やアドレス自動割り当てなどの機能を実現するよ。
+    トランスポート層は、Webのデータをブラウザへ、
+    VRChatのデータをVRChatへといった具合に
+    適切な通信を適切なアプリケーションに届けるよ。
+    インターネット層では、世界中を張り巡らされた数多のネットワークを通り抜け、
+    目的のホスト（コンピュータ）までデータを届けるよ。
+    リンク層では、そのホストから物理的に直接通信できる範囲でデータを届けるよ。
+
+    これらの層が連携して仕事をすることで様々な通信を実現できるよ。
+  }
 \end{frame}
+
+\begin{frame}
+  \frametitle{情報を伝える根幹のしくみ}
+
+  \includegraphics[page=2,width=\linewidth]{./images/pictures.pdf}
+
+  \note{
+    今回のお話では、これらの層の一番下位の部分、リンク層に着目するよ。
+
+    リンク層で用いられるプロトコルとして、
+    LANケーブルに電気を通したり、光ファイバに光を通したりして
+    通信するEthernetや電波を遣って通信をするWi-Fiなどがあるよ。
+    また、少し古めかしいところではダイヤルアップ通信
+    （電話線とモデムとを使ったPPP）もリンク層の通信だよ。
+    この場合、コンピュータは電話を使って「直接」通信していることになるよ。
+
+    TCP/IPでは下位の層は上位の層にデータを受け渡せれば良いよ。
+    つまり、リンク層では、同一リンク内で通信でき、
+    適切にデータを伝送できれば良いので、
+    ここで用いる伝送方式はかなり自由に選択できるよ。
+    「味のあるリンク」で当たり前の通信を実現できると面白そうだね。
+  }
+\end{frame}
+
+\section{鳥類キャリアによるIP通信}
+\note{
+}
 
 \begin{frame}
   \frametitle{RFC 1149: 1990年4月1日発のジョークRFC}
@@ -185,6 +250,12 @@
     QoS（Quality of Service）の提供やIPv6への対応なども提案されているよ。
   }
 \end{frame}
+
+\section{郵便を利用したIP通信}
+
+\section{実装・実験}
+
+\section{まとめ・検討事項}
 
 \appendix
 
@@ -207,6 +278,13 @@
   \setbeamerfont{bibliography entry location}{size=\footnotesize}
   \setbeamerfont{bibliography entry note}{size=\footnotesize}
   \begin{thebibliography}{1}
+    \bibitem{RFC1122}
+      Braden, R.,
+      \newblock
+      Requirements for Internet Hosts --- Communication Layers\textmd,
+      \newblock
+      \href{https://doi.org/10.17487/RFC1122}{RFC 1122}, October 1989.
+
     \bibitem{RFC1149}
       Waitzman, D.,
       \newblock
