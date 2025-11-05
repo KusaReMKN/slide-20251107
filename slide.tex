@@ -23,6 +23,7 @@
 \usepackage{appendixnumberbeamer}
 \usepackage{tabto}
 \usepackage[superscript]{cite}
+\usepackage{siunitx}
 
 \RenewDocumentCommand\citeform{m}{[#1]}
 
@@ -93,6 +94,21 @@
     今回の発表の流れはこんな感じだよ。
     おおよそ25分くらいで進められたらいいな。
   }
+\end{frame}
+
+\begin{frame}
+  \frametitle{今回の発表に関係するひとびと}
+
+  \begin{center}
+    \tabcolsep = .25\zw
+    \begin{tabular}{cccc}
+      \includegraphics[width=0.20\linewidth]{./images/mikan.png} &
+      \includegraphics[width=0.20\linewidth]{./images/shinanomai.jpg} &
+      \includegraphics[width=0.20\linewidth]{./images/nejikugi.jpg} &
+      \includegraphics[width=0.20\linewidth]{./images/yude.jpg} \\
+      実装 & 発案 & 命名 & 監修 \\
+    \end{tabular}
+  \end{center}
 \end{frame}
 
 \section*{みかんちゃんについて}
@@ -233,6 +249,8 @@
 
 \section{鳥類キャリアによるIP通信}
 \note{
+  ここで、「味のあるリンク」であるところの
+  鳥類キャリアについて思いを馳せていくよ。
 }
 
 \begin{frame}
@@ -241,17 +259,137 @@
   鳥類キャリアを用いたIP通信の手法が検討されている\cite{RFC1149}\\
   \hspace{1.5\zw}QoSの提供\cite{RFC2549}やIPv6への対応\cite{RFC6214}など改良・拡張されている
 
+  2001年 ノルウェーで実装実験が行われた
+  \begin{itemize}
+    \item
+      6羽のハトを使ってpingパケットを伝送
+    \item
+      道中、別のハトの群れと一緒に寄り道するなど
+    \item
+      4羽がパケットを持って戻ってきた（33\%の損失）
+    \item
+      往復通信時間は3211秒から6389秒までさまざま
+  \end{itemize}
 
   \note{
-    鳥類キャリア、要は伝書鳩を用いて
-    IPデータグラムをカプセル化する手法が検討されているよ。
-    この手法は1990年に提案されたものだけど、
-    その後も改良や拡張が進められていて、
-    QoS（Quality of Service）の提供やIPv6への対応なども提案されているよ。
+    興味深いリンクの手法として、「鳥類キャリア」があるよ。
+    これは、情報を伝える手段として、電気や電波の代わりに
+    鳥類（つまり伝書鳩など）を用いるものだよ。
+    実験用のプロトコルとしてRFCに規格があるよ。
+    当然、ジョークのRFCであるが、QoSの検討やIPv6への対応も図られているよ。
+
+    実装も試みられていて、2001年にはノルウェーで実験が行われているよ。
+    この実験では6羽のハトを使ってpingパケットを伝送したよ。
+    この日は現地では珍しい晴れの日であったようで、
+    道中別のハトの群れと一緒に一時間ほど寄り道するなどしていたようだよ。
+    パケットは無事に相手の端へ辿り着き、4羽が応答パケットを持って帰ってきたよ。
+    パケロス率は33\%、
+    RTTは3211秒から6389秒まで（大体1--2時間程度）であったようだよ。
   }
 \end{frame}
 
-\section{郵便を利用したIP通信}
+\begin{frame}
+  \frametitle{鳥類キャリアを用いたIP通信の手順}
+
+  \begin{enumerate}
+      \setcounter{enumi}{-1}
+    \item
+      IPデータグラムが生成される
+    \item
+      IPデータグラムを小さな細長い紙に16進数で印刷する
+    \item
+      鳥の脚に紙を巻き付け、テープで止める
+    \item
+      鳥を目的の端に飛ばす
+      \vspace{\zh}
+    \item
+      飛んできた鳥の脚に巻き付けられた紙切れを剥がす
+    \item
+      紙に印刷されているデータグラムを読み取る
+    \item
+      コンピュータはデータグラムを処理する
+  \end{enumerate}
+
+  \note{
+    鳥類キャリアによるIP通信はスライドに示される手段で行われるよ。
+
+    IPデータグラムはそのまま（ヘッダなどを付けることなく）
+    16進数で印刷されるよ。
+    ヘッダを付けてしまうと、
+    頭を切り落とされたときに伝送パフォーマンスが下がることが懸念されているよ。
+
+    データグラムの読み取りにはOCRを使っても良いし、人間を使っても良いよ。
+  }
+\end{frame}
+
+\begin{frame}
+  \frametitle{鳥類キャリアを用いたIP通信の特徴}
+
+  \vspace{.25\zh}
+  \begin{itemize}
+    \item
+      通信の帯域幅は鳥の脚の長さによる（時間経過で変化）
+    \item
+      キャリアは喪失し得る（がIPとしては問題ない）
+    \item
+      MTUは鳥によって可変（典型的には\qty{256}{\milli\gram}）
+    \item
+      用いる鳥の種類によってQoSを設定できる
+    \item
+      ブロードキャスト・マルチキャストはむつかしい
+    \item
+      IPv4とIPv6とを区別するにはIPヘッダを見るしかない
+    \item
+      位置（地域）によってはキャリアのホップが短い
+    \item
+      盗聴（覗き見）によるセキュリティ上の懸念がある
+  \end{itemize}
+
+  \note{
+    RFCの本文で述べられている実用的な特徴はスライドに示す通りだよ。
+    重要なところを紹介するよ。
+    IPはベストエフォートの通信を提供するので、キャリアは喪失しても問題ないよ。
+    MTUやQoSについては鳥の運用期間や種類によって設定されるよ。
+    これらについては、人間の関与できるところではないので、
+    キャリア特有の問題だと考えられるよ。
+    また、鳥のヘッダを見てもパケットの種別を判断できないので、
+    IPv4とIPv6との区別はこのレイヤで判別できないよ。
+    これは、将来的にIPよりも素晴らしいプロトコルが登場したときに不便だよ。
+  }
+\end{frame}
+
+\section{郵便を用いたIP通信}
+\note{
+  ということで、鳥類キャリアのかわりに郵便を用いることについて考えてみるよ。
+}
+
+\begin{frame}
+  \frametitle{郵便を用いたIP通信}
+
+  キャリアとして鳥類のかわりに郵便を用いる\\
+  \hspace{1.5\zw}→ 鳥類キャリア特有の制約を取り払える
+
+  \begin{itemize}
+    \item
+      パケット喪失率を低減できる
+    \item
+      QoSを確実にコントールできる
+    \item
+      通信の大容量化を実現できる
+  \end{itemize}
+  \note{
+    この通信方式では
+    鳥類キャリアによるIP通信をベースに、
+    キャリアとして鳥類の代わりに郵便を用いることで
+    鳥類キャリア特有の制約を取り払うよ。
+
+    具体的には、スライドに挙げたような特徴を有すると考えているよ。
+  }
+\end{frame}
+
+\begin{frame}
+
+\end{frame}
 
 \section{実装・実験}
 
