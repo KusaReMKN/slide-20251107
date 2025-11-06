@@ -4,10 +4,10 @@
   fleqn,
   14pt,
 ]{beamer}
-\batchmode
+%\batchmode
 
 \usetheme[progressbar=frametitle]{Metropolis}
-\setbeameroption{show notes on second screen=bottom}
+%\setbeameroption{show notes on second screen=bottom}
 
 \usepackage{xparse}
 \usepackage{mathtools,amssymb}
@@ -108,7 +108,21 @@
       \includegraphics[width=0.20\linewidth]{./images/yude.jpg} \\
       実装 & 発案 & 命名 & 監修 \\
     \end{tabular}
+    \begin{tabular}{cc}
+      \includegraphics[width=0.15\linewidth]{./images/kurari.jpg} &
+      \includegraphics[width=0.15\linewidth]{./images/moyashi.jpg} \\
+      \multicolumn{2}{c}{被害者ら} \\
+    \end{tabular}
   \end{center}
+
+  \note{
+    今回の発表に関係している人はスライドに示される通りだよ。
+    信濃眞伊が発案したものを上羽未栞が実装しようと試みて、
+    その途中で佐伯真紘が命名したよ。
+    実装にあたっては一式すみれによる監修があったよ。
+    また、実験にあたっては二名の被害者らによる協力があったよ。
+    この場を借りて御礼申し上げるよ。
+  }
 \end{frame}
 
 \section*{みかんちゃんについて}
@@ -366,34 +380,306 @@
 \begin{frame}
   \frametitle{郵便を用いたIP通信}
 
+  \vspace{\zh}
   キャリアとして鳥類のかわりに郵便を用いる\\
   \hspace{1.5\zw}→ 鳥類キャリア特有の制約を取り払える
 
-  \begin{itemize}
-    \item
-      パケット喪失率を低減できる
-    \item
-      QoSを確実にコントールできる
-    \item
-      通信の大容量化を実現できる
-  \end{itemize}
+  \includegraphics[page=1,width=\linewidth]{./images/halfpictures.pdf}
+
   \note{
     この通信方式では
     鳥類キャリアによるIP通信をベースに、
     キャリアとして鳥類の代わりに郵便を用いることで
     鳥類キャリア特有の制約を取り払うよ。
 
-    具体的には、スライドに挙げたような特徴を有すると考えているよ。
+    つまり、鳥によって運ばれていたパケットを郵便によって運ぶほかは
+    基本的に鳥類キャリアを用いたIP通信を基にしているよ。
   }
 \end{frame}
 
 \begin{frame}
+  \frametitle{郵便を用いたIP通信の手順}
 
+  \begin{enumerate}
+      \setcounter{enumi}{-1}
+    \item
+      IPデータグラムが生成される
+    \item
+      IPデータグラムを便箋などに印刷する
+    \item
+      便箋を封筒に入れ、必要な金額の切手を貼る
+    \item
+      ポストに投函する
+      \vspace{\zh}
+    \item
+      家の郵便受けに届いた封筒から便箋を取り出す
+    \item
+      便箋に印刷されているデータグラムを読み取る
+    \item
+      コンピュータはデータグラムを処理する
+  \end{enumerate}
+
+  \note{
+    郵便によるIP通信はスライドに示される手段で行われるよ。
+
+    鳥類キャリアによる通信と比較してみると、
+    鳥に関連している部分が郵便に置き換えられているだけだよ。
+  }
 \end{frame}
 
-\section{実装・実験}
+\begin{frame}
+  \frametitle{鳥類キャリア vs. 郵便}
+
+  \textbf{パケット喪失率を低減できる}\\
+  \hspace{1.5\zw}郵便は鳥類よりもリンクの信頼性が高い
+
+  \textbf{QoSを確実にコントロールできる}\\
+  \hspace{1.5\zw}速達やレターパックなどさまざまなサービスを選択できる\\
+  \hspace{1.5\zw}特定記録や簡易書留などでパケットの到達を保証できる
+
+  \textbf{通信の大容量化を実現できる}\\
+  \hspace{1.5\zw}重さによる制限が緩和される（\qty{256}{\milli\gram} → \qty{50}{\gram}）\\
+  \hspace{1.5\zw}一度に送信可能なデータ量は封筒の大きさで選択できる\\
+  \hspace{1.5\zw}16進数だけでなく、Base64やQRコードなどにも対応できる
+
+  \note{
+    鳥類キャリアを用いた通信に比べた郵便を用いた通信の特徴を述べてみるよ。
+
+    まず、パケット喪失率を低減できるようになるよ。
+    郵便は鳥類キャリアよりもリンクの信頼性が高いからだよ。
+    また、QoSを確実にコントロールできるようになるよ。
+    速達などのオプションを利用すればパケットを速く届けられるし、
+    特定記録などを利用すればパケットの到達を保証できるよ。
+    さらに、通信の大容量化を実現できるよ。
+    重さによる制限が約200倍改善されるので、
+    より多くのデータを一度に送れるようになるよ。
+    普通は紙でデータを送ることになると思うけれども、
+    紙は鳥の脚に巻き付けられることかた解き放たれているので、
+    この大きさは封筒の大きさに合わせて自由に選択できるよ。
+    紙面が広がったことで、16進数だけでなく、
+    Base64やQRコードを印刷することもできるよ。
+  }
+\end{frame}
+
+\section{システムの実装}
+\note{
+  机上の空論ではつまらないので、これらについて実装を行ったよ。
+}
+
+\begin{frame}
+  \frametitle{前座: 通常の通信のシステム構成}
+
+  \includegraphics[page=3,width=\linewidth]{./images/pictures.pdf}
+
+  \note{
+    ここで、通常のデバイスによる通信に思いを馳せてみよう。
+    通常、デバイスはカーネルが管理しているよ。
+    当然、デバイスはカーネルと直接会話をするよ。
+    そのため、より低レイヤ（OSI参照モデルでL2以下、リンク層）の通信は
+    通常であればユーザの世界に出てこないよ。
+    この方式によって愚直に実装しようと思えば、
+    デバイスの開発やカーネルの修正など、膨大な作業が必要になってしまい、
+    現実的ではないよ。
+  }
+\end{frame}
+
+\begin{frame}
+  \frametitle{ダイヤルアップ通信に思いを馳せる}
+
+  ダイヤルアップ通信は本質的にPPP\\
+  \hspace{1.5\zw}PPPではシリアルデバイスによってネットワーク接続を実現
+
+  シリアルデバイスはユーザの世界に露出している\\
+  \hspace{1.5\zw}Unixの世界ではシリアルデバイスをファイルと同様に扱える\\
+  \hspace{1.5\zw}PPPのマネをすればユーザの世界から通信を吹き込める
+
+  TUN/TAP（トンネルデバイス）を用いることで\\
+  \hspace{1.5\zw}「普通のプログラム」からでも通信を実現できる
+
+  \note{
+    ここで、ダイヤルアップ通信に思いを馳せてみよう。
+    ダイヤルアップ通信というのは本質的にPPPというプロトコルで通信しているよ。
+    PPPではシルアルデバイスによってネットワーク接続を実現しているよ。
+
+    ここで、よく考えてみると、シリアルデバイスというものは
+    デバイスファイルとしてユーザの世界に露出していて、
+    これはファイルのように読み書きできるよ。
+    PPPのマネをすればユーザの世界から通信を吹き込めるということなので、
+    これについて調べてみると、
+    TUN/TAP（トンネルデバイス）というものに辿り着くよ。
+    これを利用すると「普通のプログラム」からでも通信を実現できるようだよ。
+  }
+\end{frame}
+
+\begin{frame}
+  \frametitle{LoLLIPoP: Lots of Latency Letter IP over Post}
+
+  \includegraphics[page=4,width=\linewidth]{./images/pictures.pdf}
+
+  \note{
+    これを踏まえて郵便によるIP通信システムLoLLIPoPを開発したよ。
+    LoLLIPoPでは、TUN/TAPを利用して仮想NICを用意し、
+    さらにパケットの入出力のためのインタフェイルを用意するよ。
+    システムはdaemonとCLI tool chainとに分かれていて、
+    daemonは入出力インタフェイスとNICとの間でデータを取り次ぐよ。
+    CLI tool chainはユーザと入出力インタフェースとの間でデータを取り次ぐよ。
+    ネットワークを利用して通信するプログラムからは通常のNICと同様に見えるから、
+    pingやその他のプログラムをそのまま利用できるよ。
+
+    あと、パケットの先頭に疑似ヘッダを添えることで
+    将来登場するより素晴しいプロトコルにも対応できるようにしているよ。
+  }
+\end{frame}
+
+\section{通信の実験}
+\note{
+  開発したシステムをつかって、通信実験を行ってみたよ。
+}
+
+\begin{frame}
+  \frametitle{10月28日: パケットの生成、送信}
+
+  各方面へのpingパケットをQRコードの形式で印刷、送信
+
+  \begin{center}
+    \begin{tabular}{cc}
+      \includegraphics[width=0.45\linewidth]{./images/IMG_7302.jpeg} &
+      \includegraphics[width=0.45\linewidth]{./images/IMG_7303.jpeg} \\
+    \end{tabular}
+  \end{center}
+
+  \note{
+    10月28日、pingパケットが生成され、QRコードの形式で印刷、送信されたよ。
+    このとき、パケットの形状としては郵便書簡が用いられたよ。
+    郵便書簡ははがきと同額でありながら封筒のように使えるのでお得だよ。
+  }
+\end{frame}
+
+\begin{frame}
+  \frametitle{10月30日: パケットの着信報告}
+
+  各方面からパケットの着信報告が寄せられる
+
+  \centering
+  \includegraphics[width=.8\linewidth]{./images/IMG_7354.PNG}
+
+  \note{
+    二日経って、パケットの着信報告が各方面から寄せられたよ。
+    しかし、その報告は嬉しいものではなかったよ。
+  }
+\end{frame}
+
+\begin{frame}
+  \frametitle{通信失敗の原因: パケット形式の不一致}
+
+  送信側が古いバージョンのプログラムを利用していた\\
+  \hspace{1.5\zw}パケットの先頭に疑似ヘッダのついていないものを送信した
+
+  \centering
+  \includegraphics[width=.8\linewidth]{./images/IMG_7355.PNG}
+
+  \note{
+    アホだね〜
+  }
+\end{frame}
+
+\begin{frame}
+  \frametitle{10月31日: 速達でパケットを再送信}
+
+  定型郵便（110円）に速達（300円）をつけると送料は410円\\
+  \hspace{1.5\zw}レターパックライトは430円
+
+  \centering
+  \includegraphics[width=.8\linewidth]{./images/IMG_7356.PNG}
+
+  \note{
+    原因に気付いてすぐパケットを再生成、再送信したよ。
+  }
+\end{frame}
+
+\begin{frame}
+  \frametitle{11月4日: 初めての返信パケットを受信}
+
+  \includegraphics[width=\linewidth]{./images/IMG_E7357.jpeg}
+
+  \note{
+    原因に気付いてすぐパケットを再生成、再送信したよ。
+  }
+\end{frame}
+
+\begin{frame}
+  \frametitle{ping実行結果}
+
+  \includegraphics[width=\linewidth]{./images/ping.png}
+
+  \note{
+    原因に気付いてすぐパケットを再生成、再送信したよ。
+  }
+\end{frame}
+
+\begin{frame}
+  \centering\large
+  time=411791688 ms
+  \note{
+    4億
+    1179万
+    1688ミリ秒
+  }
+\end{frame}
+
+\begin{frame}
+  \centering\LARGE
+  411\,791\,688 ms\\
+  ||\\
+  \Huge\bfseries
+  4.7661日
+\end{frame}
+
+\begin{frame}
+  \frametitle{往復通信 実験結果}
+
+  全5件中2件往復成功
+
+  平均往復時間: XXX ms（XXX日）
+
+  \note{}
+\end{frame}
 
 \section{まとめ・検討事項}
+\note{
+  まとめるよ〜
+}
+
+\begin{frame}
+  \frametitle{郵便を用いた超低速IP通信システムの検討}
+
+  鳥類キャリアを用いたIP通信に着想を得て\\
+  \hspace{1.5\zw}郵便を用いたIP通信システムを検討した
+
+  Linux上で動作する実装を試作した
+
+  通信実験ではパケットロス率XX\%\\
+  \hspace{1.5\zw}平均往復時間XX msを記録した
+
+  \note{}
+\end{frame}
+
+\begin{frame}
+  \frametitle{今後の検討事項}
+
+  PING以外の通信\\
+  \hspace{1.5\zw}TCPの3 way handshakeの実現\\
+  \hspace{1.5\zw}Wake on Letterなどのアプリケーション開発
+
+  ブロードキャスト・マルチキャストの問題\\
+  \hspace{1.5\zw}回覧板（トークンリング）方式による実装\\
+  \hspace{1.5\zw}定期刊行物（第三種郵便）による実装
+
+  その他のリンクによる通信\\
+  \hspace{1.5\zw}電子メールによるe-LoLLIPoPの検討（MIME type の策定）
+
+  \note{}
+\end{frame}
 
 \appendix
 
