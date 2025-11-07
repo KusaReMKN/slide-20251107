@@ -4,7 +4,7 @@
   fleqn,
   14pt,
 ]{beamer}
-%\batchmode
+\batchmode
 
 \usetheme[progressbar=frametitle]{Metropolis}
 %\setbeameroption{show notes on second screen=bottom}
@@ -52,7 +52,7 @@
 \usepackage{hyperref}
 
 \title{郵便を用いた超低速IP通信システムの検討}
-\subject{エンジニア作業飲み集会\#XXX}
+\subject{エンジニア作業飲み集会\#147}
 \author{%
   \texorpdfstring{%
     \ltjsetparameter{autospacing=false, autoxspacing=false}
@@ -62,11 +62,14 @@
     一式 すみれ\inst{\dag}\inst{d)}}
     {上羽 未栞\and 信濃 眞伊\and 佐伯 真紘\and 一式 すみれ}}
 \institute{
-  \inst{\dag}\hspace{.66\zw}東京広域電話網, \url{https://tkytel.github.io/}\\
-  a) a.k.a. KusaReMKN, \url{mkn@kusaremkn.com}\\
-  b) \url{me@shinanomai.xyz}\\
-  c) a.k.a. Nejikugi, \url{me@scrwnl.eu.org}\\
-  d) a.k.a. yude, \url{i@yude.jp}
+  \tabcolsep = .25\zw
+  \begin{tabular}{rl}
+    \inst{\dag} & 東京広域電話網, \url{https://tkytel.github.io/}\\
+    a) & a.k.a. KusaReMKN, \url{mkn@kusaremkn.com}\\
+    b) & \url{me@shinanomai.xyz}\\
+    c) & a.k.a. Nejikugi, \url{me@scrwnl.eu.org}\\
+    d) & a.k.a. yude, \url{i@yude.jp}
+  \end{tabular}
 }
 \keywords{LoLLIPoP; 郵便; TCP/IP; RFC 1149}
 \date{2025-11-07}
@@ -88,7 +91,7 @@
 \begin{frame}
   \frametitle{今回のおはなし}
 
-  ~\\[.25\baselineskip]
+  \vspace{.25\zh}
   \tableofcontents
   \note{
     今回の発表の流れはこんな感じだよ。
@@ -117,9 +120,9 @@
 
   \note{
     今回の発表に関係している人はスライドに示される通りだよ。
-    信濃眞伊が発案したものを上羽未栞が実装しようと試みて、
-    その途中で佐伯真紘が命名したよ。
-    実装にあたっては一式すみれによる監修があったよ。
+    誰かが発案したものを誰かが実装しようと試みて、
+    その途中で誰かが命名したよ。
+    実装にあたっては誰かによる監修があったよ。
     また、実験にあたっては二名の被害者らによる協力があったよ。
     この場を借りて御礼申し上げるよ。
   }
@@ -174,6 +177,7 @@
 
 \section{インターネットを支える技術}
 \note{
+  内容に入る前に、
   まずはインターネットを支える技術について思いを馳せてみるよ。
 }
 
@@ -208,6 +212,8 @@
     しかし、これを支える技術、
     特により物理側に近い層については関心を寄せる人は
     あまり多くないような印象があるよ。
+    ネットワークがなぜ繋がるのかをあまり考えずに、
+    その通信にタダ乗りしている風潮があるよ。
     これは由々しき事態であるから、
     積極的にネットワークに思いを馳せていきたいね。
   }
@@ -491,10 +497,10 @@
 
   シリアルデバイスはユーザの世界に露出している\\
   \hspace{1.5\zw}Unixの世界ではシリアルデバイスをファイルと同様に扱える\\
-  \hspace{1.5\zw}PPPのマネをすればユーザの世界から通信を吹き込める
+  \hspace{1.5\zw}pppdのマネをすればユーザの世界から通信を吹き込める
 
-  TUN/TAP（トンネルデバイス）を用いることで\\
-  \hspace{1.5\zw}「普通のプログラム」からでも通信を実現できる
+  pppdはTUN/TAPを用いることで仮想的なNICを生やす\\
+  \hspace{1.5\zw}同様の手法で「普通のプログラム」でも通信を吹き込める
 
   \note{
     ここで、ダイヤルアップ通信に思いを馳せてみよう。
@@ -504,9 +510,11 @@
     ここで、よく考えてみると、シリアルデバイスというものは
     デバイスファイルとしてユーザの世界に露出していて、
     これはファイルのように読み書きできるよ。
-    PPPのマネをすればユーザの世界から通信を吹き込めるということなので、
+    PPPを実現するpppdのマネをすれば
+    ユーザの世界から通信を吹き込めるということなので、
     これについて調べてみると、
-    TUN/TAP（トンネルデバイス）というものに辿り着くよ。
+    TUN/TAP（トンネルデバイス）を利用して仮想的なNICを生成しているようだよ。
+    つまり、
     これを利用すると「普通のプログラム」からでも通信を実現できるようだよ。
   }
 \end{frame}
@@ -519,7 +527,7 @@
   \note{
     これを踏まえて郵便によるIP通信システムLoLLIPoPを開発したよ。
     LoLLIPoPでは、TUN/TAPを利用して仮想NICを用意し、
-    さらにパケットの入出力のためのインタフェイルを用意するよ。
+    さらにパケットの入出力のためのインタフェイスを用意するよ。
     システムはdaemonとCLI tool chainとに分かれていて、
     daemonは入出力インタフェイスとNICとの間でデータを取り次ぐよ。
     CLI tool chainはユーザと入出力インタフェースとの間でデータを取り次ぐよ。
@@ -587,13 +595,15 @@
   \frametitle{10月31日: 速達でパケットを再送信}
 
   定型郵便（110円）に速達（300円）をつけると送料は410円\\
-  \hspace{1.5\zw}レターパックライトは430円
+  \hspace{1.5\zw}→ 翌日以降、続々と着信報告があった
 
   \centering
   \includegraphics[width=.8\linewidth]{./images/IMG_7356.PNG}
 
   \note{
     原因に気付いてすぐパケットを再生成、再送信したよ。
+    速達をつけたことで、翌日以降続々と着信報告があったよ。
+    きちんと転送速度を制御できていることを確認できたよ。
   }
 \end{frame}
 
@@ -603,7 +613,12 @@
   \includegraphics[width=\linewidth]{./images/IMG_E7357.jpeg}
 
   \note{
-    原因に気付いてすぐパケットを再生成、再送信したよ。
+    しばらく待っていると、
+    初めての返信パケットが到着したよ。
+    QRコードに印刷されたパケットを読み込み、
+    LoLLIPoPシステムに入力したところ、
+    きちんと処理されたよ。
+    そして……
   }
 \end{frame}
 
@@ -613,17 +628,18 @@
   \includegraphics[width=\linewidth]{./images/ping.png}
 
   \note{
-    原因に気付いてすぐパケットを再生成、再送信したよ。
+    pingコマンドの実行結果はこのようになったよ。
   }
 \end{frame}
 
 \begin{frame}
   \centering\large
-  time=411791688 ms
+  time${}={}$411791688 ms
   \note{
     4億
     1179万
     1688ミリ秒
+    だよ
   }
 \end{frame}
 
@@ -633,16 +649,42 @@
   ||\\
   \Huge\bfseries
   4.7661日
+  \note{
+    これはなんと約4.7日に相当するよ。
+    アホだね〜。
+  }
 \end{frame}
 
 \begin{frame}
-  \frametitle{往復通信 実験結果}
+  \frametitle{往復通信の実験結果}
 
-  全5件中2件往復成功
+  全5件のうち3件が往復通信に成功\\
+  \hspace{1.5\zw}残りの2件は返信処理中
 
-  平均往復時間: XXX ms（XXX日）
+  \begin{itemize}
+    \item
+      \qty{411791688}{\milli\second}（郵便書簡）
+    \item
+      \qty{581116715}{\milli\second}（宅急便）
+    \item
+      \qty{668453815}{\milli\second}（はがき）
+  \end{itemize}
+  平均往復時間: \qty{553787406}{\milli\second}（\textbf{6.4095日}）
 
-  \note{}
+  \note{
+    実験の結果をまとめるとこのようになるよ。
+    全5件のうち3件が往復通信に成功したよ。
+    残りの2件は現在返信処理中であるというウワサを聞いているよ。
+
+    平均の往復時間は5億5378万7406ミリ秒で、大体6日と半分だよ。
+  }
+\end{frame}
+
+\begin{frame}
+  \frametitle{実際に送信されてきた往復パケット}
+
+  \centering
+  \includegraphics[width=.75\linewidth]{./images/IMG_7358.jpeg}
 \end{frame}
 
 \section{まとめ・検討事項}
@@ -654,14 +696,25 @@
   \frametitle{郵便を用いた超低速IP通信システムの検討}
 
   鳥類キャリアを用いたIP通信に着想を得て\\
-  \hspace{1.5\zw}郵便を用いたIP通信システムを検討した
+  \hspace{1.5\zw}郵便を用いたIP通信システムを検討した\\
+  \hspace{1.5\zw}人間によってよりコントロールしやすい通信を実現
 
-  Linux上で動作する実装を試作した
+  Linux上で動作する実装を試作した\\
+  通信実験ではパケットロス率40\%（現時点; 待てば届きそう）\\
+  \hspace{1.5\zw}平均往復時間\qty{553787406}{\milli\second}を記録した
 
-  通信実験ではパケットロス率XX\%\\
-  \hspace{1.5\zw}平均往復時間XX msを記録した
+  \note{
+    郵便を用いた超低速IP通信システムの検討ということで、
+    鳥類キャリアを用いたIP通信に着想を得て、
+    郵便を用いたIP通信システムを検討したよ。
+    キャリアとして郵便を用いることで、
+    鳥類特有の制限を取り払うことができ、
+    人間によってよりコントロールしやすい通信を実現できるよ。
 
-  \note{}
+    これについて、Linux上で動作するトンネルデバイスを用いた実装を試作したよ。
+    通信実験ではパケットロス率（これは待てば届きそうだけど）40\%を記録し、
+    平均往復時間は5億5378万7406ミリ秒となったよ。
+  }
 \end{frame}
 
 \begin{frame}
@@ -677,8 +730,12 @@
 
   その他のリンクによる通信\\
   \hspace{1.5\zw}電子メールによるe-LoLLIPoPの検討（MIME type の策定）
+\end{frame}
 
-  \note{}
+\begin{frame}
+  \frametitle{あなたたちも郵便でIP通信をしなさい}
+
+  \includegraphics[width=\linewidth]{./images/lollipop.png}
 \end{frame}
 
 \appendix
